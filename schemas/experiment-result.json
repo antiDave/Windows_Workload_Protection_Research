@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Windows Workload Protection Research Experiment Result",
+  "type": "object",
+  "required": ["schema_version", "experiment_id", "timestamp", "windows", "workload", "result"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "experiment_id": {"type": "string"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "windows": {
+      "type": "object",
+      "required": ["version", "build"],
+      "properties": {
+        "version": {"type": "string"},
+        "build": {"type": "string"},
+        "edition": {"type": "string"},
+        "architecture": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "update": {
+      "type": ["object", "null"],
+      "properties": {
+        "id": {"type": "string"},
+        "category": {"type": "string"},
+        "reboot_behavior": {"type": "string", "enum": ["NeverReboots", "CanRequestReboot", "AlwaysRequiresReboot", "Unknown"]},
+        "reboot_required": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "active_hours_enabled": {"type": "boolean"},
+        "active_hours_start": {"type": "string"},
+        "active_hours_end": {"type": "string"},
+        "scheduled_restart": {"type": ["string", "null"], "format": "date-time"},
+        "deadline": {"type": ["string", "null"], "format": "date-time"},
+        "grace_period": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
+    "workload": {
+      "type": "object",
+      "required": ["executable"],
+      "properties": {
+        "executable": {"type": "string"},
+        "pid": {"type": "integer"},
+        "runtime_seconds": {"type": "integer", "minimum": 0},
+        "command_line": {"type": "string"},
+        "working_directory": {"type": "string"},
+        "protected": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "intervention": {
+      "type": "object",
+      "properties": {
+        "shutdown_block_requested": {"type": "boolean"},
+        "shutdown_block_accepted": {"type": "boolean"},
+        "description": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "result": {
+      "type": "object",
+      "required": ["restart_requested", "restart_occurred", "classification"],
+      "properties": {
+        "restart_requested": {"type": "boolean"},
+        "restart_occurred": {"type": "boolean"},
+        "workload_survived": {"type": ["boolean", "null"]},
+        "classification": {"type": "string", "enum": ["requested", "accepted", "deferred", "overridden", "unknown"]},
+        "reason": {"type": "string"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
